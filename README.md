@@ -163,6 +163,15 @@ The frontend will be available at `http://localhost:3000`
 3. Set output directory: `dist`
 4. Add environment variable: `VITE_API_URL` pointing to your backend URL
 
+## ⚡️ Vercel Deployment Note
+
+When deploying to Vercel, make sure to set the **Root Directory** to `frontend` during project import. This ensures Vercel uses the correct build and output settings for your React app.
+
+- **Root Directory:** `frontend`
+- **Build Command:** `npm run build`
+- **Output Directory:** `dist`
+- **Environment Variable:** `VITE_API_URL` (your backend URL)
+
 ---
 
 ## 🧪 Testing
@@ -204,4 +213,3 @@ The application includes comprehensive error handling and validation:
 7. **Admin Panel**: Event management interface for creators
 
 ---
-
