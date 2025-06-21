@@ -1,5 +1,6 @@
 from fastapi import FastAPI, Depends, HTTPException, status, Query
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import Response
 from sqlalchemy.orm import Session
 from typing import List
 import os
@@ -19,15 +20,10 @@ app = FastAPI(
     version="1.0.0"
 )
 
-# Get allowed origins from environment variable or use defaults
-ALLOWED_ORIGINS = os.getenv(
-    "ALLOWED_ORIGINS", "http://localhost:3000,http://localhost:3001,http://localhost:5173,https://slot-tracker-git-main-iharrythakurs-projects.vercel.app")
-allowed_origins = [origin.strip() for origin in ALLOWED_ORIGINS.split(",")]
-
-# CORS middleware
+# CORS middleware - allow all origins for development
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=allowed_origins,
+    allow_origins=["*"],  # Allow all origins for development
     allow_credentials=True,
     allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allow_headers=["*"],
@@ -37,16 +33,6 @@ app.add_middleware(
 @app.get("/")
 def read_root():
     return {"message": "Welcome to BookMySlot API", "version": "1.0.0"}
-
-
-@app.options("/")
-def options_root():
-    return {"message": "OK"}
-
-
-@app.options("/events")
-def options_events():
-    return {"message": "OK"}
 
 
 @app.post("/events", response_model=schemas.EventResponse, status_code=status.HTTP_201_CREATED)
