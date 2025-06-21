@@ -12,8 +12,8 @@ from .database import engine, get_db
 
 load_dotenv()
 
-# Create database tables
-models.Base.metadata.create_all(bind=engine)
+# Don't create tables immediately - let them be created on first request
+# models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI(
     title="BookMySlot API",
@@ -43,11 +43,13 @@ def read_root():
 
 @app.get("/health")
 def health_check():
-    """Check if database is connected"""
+    """Check if database is connected and create tables if needed"""
     try:
-        # Test database connection
+        # Test database connection and create tables
         with engine.connect() as connection:
             result = connection.execute(text("SELECT 1"))
+            # Create tables if they don't exist
+            models.Base.metadata.create_all(bind=engine)
             return {"status": "healthy", "database": "connected", "result": result.fetchone()[0]}
     except Exception as e:
         return {"status": "unhealthy", "database": "disconnected", "error": str(e)}
