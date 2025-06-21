@@ -21,7 +21,7 @@ app = FastAPI(
 
 # Get allowed origins from environment variable or use defaults
 ALLOWED_ORIGINS = os.getenv(
-    "ALLOWED_ORIGINS", "   ALLOWED_ORIGINS=http://localhost:3000,http://localhost:3001,http://localhost:5173,https://slot-tracker-git-main-iharrythakurs-projects.vercel.app")
+    "ALLOWED_ORIGINS", "http://localhost:3000,http://localhost:3001,http://localhost:5173,https://slot-tracker-git-main-iharrythakurs-projects.vercel.app")
 allowed_origins = [origin.strip() for origin in ALLOWED_ORIGINS.split(",")]
 
 # CORS middleware
@@ -41,6 +41,11 @@ def read_root():
 
 @app.options("/")
 def options_root():
+    return {"message": "OK"}
+
+
+@app.options("/events")
+def options_events():
     return {"message": "OK"}
 
 
