@@ -1,5 +1,6 @@
-from fastapi import FastAPI, Depends, HTTPException, status, Query
+from fastapi import FastAPI, Depends, HTTPException, status, Query, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 from sqlalchemy.orm import Session
 from typing import List
 import os
@@ -24,14 +25,24 @@ ALLOWED_ORIGINS = os.getenv(
     "ALLOWED_ORIGINS", "http://localhost:3000,http://localhost:3001,http://localhost:5173,https://slot-tracker-git-main-iharrythakurs-projects.vercel.app")
 allowed_origins = [origin.strip() for origin in ALLOWED_ORIGINS.split(",")]
 
-# CORS middleware
+# CORS middleware - must be added before any routes
 app.add_middleware(
     CORSMiddleware,
     allow_origins=allowed_origins,
     allow_credentials=True,
     allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allow_headers=["*"],
+    expose_headers=["*"],
 )
+
+
+@app.middleware("http")
+async def add_cors_headers(request: Request, call_next):
+    response = await call_next(request)
+    response.headers["Access-Control-Allow-Origin"] = "*"
+    response.headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, DELETE, OPTIONS"
+    response.headers["Access-Control-Allow-Headers"] = "*"
+    return response
 
 
 @app.get("/")
@@ -41,12 +52,12 @@ def read_root():
 
 @app.options("/")
 def options_root():
-    return {"message": "OK"}
+    return JSONResponse(content={"message": "OK"}, status_code=200)
 
 
 @app.options("/events")
 def options_events():
-    return {"message": "OK"}
+    return JSONResponse(content={"message": "OK"}, status_code=200)
 
 
 @app.post("/events", response_model=schemas.EventResponse, status_code=status.HTTP_201_CREATED)
